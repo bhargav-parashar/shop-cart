@@ -1,7 +1,12 @@
 import HomePage from "./Pages/HomePage/HomePage";
+import CssBaseline from '@mui/material/CssBaseline';
 
 function App() {
-  return <HomePage/>;
+  return <>
+  <CssBaseline />
+  <HomePage/>;
+  </>
+ 
 }
 
 export default App;
