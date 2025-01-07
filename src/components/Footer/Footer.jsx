@@ -165,7 +165,7 @@ const Footer = () => {
                 color: "white",
                 textDecoration: "none",
                 fontSize: { xs: "2vw", sm: "1.5vw", md: "1vw" },
-                ":hover": { color: "lightBlue" },
+                ":hover": { color: "black" },
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -193,7 +193,7 @@ const Footer = () => {
                 color: "white",
                 textDecoration: "none",
                 fontSize: { xs: "2vw", sm: "1.5vw", md: "1vw" },
-                ":hover": { color: "lightBlue" },
+                ":hover": { color: "black" },
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -221,7 +221,7 @@ const Footer = () => {
                 color: "white",
                 textDecoration: "none",
                 fontSize: "1vw",
-                ":hover": { color: "lightBlue" },
+                ":hover": { color: "black" },
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center" }}>

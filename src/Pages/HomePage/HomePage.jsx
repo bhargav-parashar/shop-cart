@@ -1,27 +1,34 @@
-import { Box, Container } from "@mui/system";
+import React, { useState } from "react";
+import { Box} from "@mui/system";
 import { ProductsGrid } from "../../components/Grid/Grid.jsx";
-import backgroundImage from "../../assets/background-image.png";
-import Header from "../../components/Header/Header.jsx";
-import Footer from "../../components/Footer/Footer.jsx";
+import { useNavigate } from 'react-router-dom';
+
 
 const HomePage = () => {
+  const [selectedId, setSelectedId] = useState(null);
+  const [page, setPage] = useState(0);
+  const navigate = useNavigate();
+
+  //HANDLE SELECTION CHANGE
+  const handleSelectionChange = (newSelection) => {
+    const selectedRowId = newSelection[0];
+    setSelectedId(selectedRowId);
+    navigate(`/details?id=${selectedRowId}&page=${Number(page)+1+''}`)
+  };
+
+  //HANDLE PAGE CHANGE
+  const handlePageChange = (newpage) => {
+    setPage(newpage)
+  };
+
   return (
-    <Box
-      sx={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundRepeat: "repeat",
-        backgroundSize: "auto",
-        // height: "100vh",
-        width: "100%",
-      }}
-    >
-      <Container maxWidth="xl" >
-        <Header />
-        <Box sx={{ bgcolor: "white", height:"90vh", padding:"none" }}>
-          <ProductsGrid />
-        </Box>
-        <Footer />
-      </Container>
+    <Box sx={{ bgcolor: "white", height: "90vh", padding: "none" }}>
+      <ProductsGrid
+        selectedId={selectedId}
+        handleSelectionChange={handleSelectionChange}
+        page={page}
+        setPage={handlePageChange}
+      />
     </Box>
   );
 };

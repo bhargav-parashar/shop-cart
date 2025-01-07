@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../../config/config.jsx";
 import { getProducts } from "../../services/callApi.js";
 import Dropdown from "../Dropdowns/Dropdown.jsx";
 
+
 const columns = [
   {
     field: "image",
@@ -66,7 +67,7 @@ const columns = [
 const getProductRows = (arr) => {
   const rows = arr.map((item, index) => {
     return {
-      id: item.id || index,
+      id: item.gtin ,
       image: item.images.front || "",
       productName: item.name,
       category: item.main_category,
@@ -78,17 +79,16 @@ const getProductRows = (arr) => {
   return rows;
 };
 
-const ProductsGrid = () => {
+const ProductsGrid = ({selectedId,handleSelectionChange,page, setPage}) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchedItem, setSearchedItem] = useState("");
   const [sort, setSort] = useState("");
   const [categoryList, setCategoryList] = useState([]);
-
-  const [page, setPage] = useState(0);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
+
 
   const callApi = async (page) => {
     try {
@@ -132,7 +132,7 @@ const ProductsGrid = () => {
     }
 
     if (sort !== null) {
-      console.log(data);
+    
       if(sort === "Price Ascending"){
         data.sort((a,b) => a.mrp.mrp - b.mrp.mrp);
       }else if (sort === "Price Descending"){
@@ -163,7 +163,7 @@ const ProductsGrid = () => {
   
 
   return (
-    <Box sx={{ height: "90%", width: "100%" }}>
+    <Box sx={{ height: "80vh", width: "100%" }}>
       <Stack direction="row" spacing={2}>
         <Dropdown
           categoryList={categoryList}
@@ -189,6 +189,12 @@ const ProductsGrid = () => {
         onPaginationModelChange={(newPage) => handlePageChange(newPage)}
         loading={loading}
         rowCount={501 * 20}
+        onRowSelectionModelChange={(newSelectionModel) =>
+          handleSelectionChange(newSelectionModel)
+        }
+        rowSelectionModel={selectedId ? [selectedId] : []} 
+        disableMultipleSelection 
+        sx={{cursor:"pointer"}}
       />
     </Box>
   );
