@@ -1,67 +1,197 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
+import React, { useState, useEffect } from "react";
+import { Box, Stack } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import defaultImage from "../../assets/default-image.png";
+import { API_BASE_URL } from "../../config/config.jsx";
+import { getProducts } from "../../services/callApi.js";
+import Dropdown from "../Dropdowns/Dropdown.jsx";
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'firstName',
-    headerName: 'First name',
+    field: "image",
+    headerName: "",
     width: 150,
-    // editable: true,
+    align: "center",
+    headerAlign: "center",
+    renderCell: (params) => {
+      const url = params.row.image || defaultImage;
+      return (
+        <img
+          src={url}
+          alt="Product"
+          style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+        />
+      );
+    },
   },
   {
-    field: 'lastName',
-    headerName: 'Last name',
+    field: "productName",
+    headerName: "Product Name",
     width: 150,
-    // editable: true,
+    align: "center",
+    headerAlign: "center",
   },
   {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
+    field: "category",
+    headerName: "Category",
+    width: 150,
+    align: "center",
+    headerAlign: "center",
+  },
+  {
+    field: "price",
+    headerName: "Price",
+    type: "number",
     width: 110,
-    // editable: true,
+    align: "center",
+    headerAlign: "center",
   },
   {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+    field: "inStock",
+    headerName: "Status",
+    width: 110,
+    align: "center",
+    headerAlign: "center",
+  },
+  {
+    field: "details",
+    headerName: "Details",
+    width: 110,
+    align: "center",
+    headerAlign: "center",
   },
 ];
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 23 },
-  { id: 6, lastName: 'Melisandre', firstName: 'Antony', age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
+//CREATED DATA GRID ROW ITEM FROM INPUT ARRAY
+const getProductRows = (arr) => {
+  const rows = arr.map((item, index) => {
+    return {
+      id: item.id || index,
+      image: item.images.front || "",
+      productName: item.name,
+      category: item.main_category,
+      price: `₹ ${item.mrp.mrp}`,
+      inStock: item.sell_out_of_stock === 0 ? "Out of Stock" : "In Stock",
+      details: "View",
+    };
+  });
+  return rows;
+};
 
-export default function Grid() {
+const ProductsGrid = () => {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchedItem, setSearchedItem] = useState("");
+  const [sort, setSort] = useState("");
+  const [categoryList, setCategoryList] = useState([]);
+
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const callApi = async (page) => {
+    try {
+      setLoading(true);
+      const res = await getProducts(
+        `${API_BASE_URL}?page=${Number(page) + 1 + ""}`
+      );
+      setProducts(res.data.products);
+      setFilteredProducts([]);
+      setSelectedCategory("");
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //CALL API
+  useEffect(() => {
+    callApi(page);
+  }, [page]);
+
+  //UPDATE FILTERED PRODUCTS ARRAY
+  useEffect(() => {
+    const productRows =
+      filteredProducts.length === 0
+        ? getProductRows(products)
+        : getProductRows(filteredProducts);
+    setRows(productRows);
+    const catList = products.map((item, idx) => item.main_category);
+    setCategoryList(catList);
+  }, [products, filteredProducts]);
+
+  //APPLY FILTER
+  useEffect(() => {
+    let data ;
+    
+    if (selectedCategory !== null) {
+      
+      data = products.filter((item, idx) => item.main_category === selectedCategory);
+    }
+
+    if (sort !== null) {
+      console.log(data);
+      if(sort === "Price Ascending"){
+        data.sort((a,b) => a.mrp.mrp - b.mrp.mrp);
+      }else if (sort === "Price Descending"){
+       data.sort((a,b) => b.mrp.mrp - a.mrp.mrp);
+      }
+    }
+
+    setFilteredProducts(data);
+  }, [selectedCategory,sort]);
+
+  //HANDLE PAGE CHANGE
+  const handlePageChange = (newPage) => {
+    const { page: p } = newPage;
+    setPage(p);
+  };
+
+  //HANDLE FILTER CHANGE
+  const handleFilterChange = (event) => {
+    
+    if(event.target.name === "Category")
+      setSelectedCategory(event.target.value);
+     
+    if(event.target.name === "Sort")
+      setSort(event.target.value);
+        
+  };
+
+  
+
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
+    <Box sx={{ height: "85%", width: "100%" }}>
+      <Stack direction="row" spacing={2}>
+        <Dropdown
+          categoryList={categoryList}
+          selectedValue={selectedCategory}
+          handleFilterChange={handleFilterChange}
+          label="Category"
+        />
+        <Dropdown
+          categoryList={["","Price Ascending","Price Descending"]}
+          selectedValue={sort}
+          handleFilterChange={handleFilterChange}
+          label = "Sort"
+        />
+      </Stack>
+
       <DataGrid
         rows={rows}
         columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        pageSizeOptions={[5]}
-        // checkboxSelection
-        disableRowSelectionOnClick
+        pagination
+        paginationMode="server"
+        page={page}
+        pageSize={20}
+        onPaginationModelChange={(newPage) => handlePageChange(newPage)}
+        loading={loading}
+        rowCount={501 * 20}
       />
     </Box>
   );
-}
+};
+
+export { ProductsGrid };
