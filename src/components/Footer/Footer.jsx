@@ -81,7 +81,7 @@ const Footer = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "green",
+        backgroundColor: "#577616",
         padding: "5% 10%",
       }}
     >
@@ -232,7 +232,7 @@ const Footer = () => {
           ))}
         </Box>
       </Box>
-      <Box sx={{ borderTop: "1px solid white", paddingTop: "20px" }}>
+      <Box sx={{ borderTop: "1px solid black", paddingTop: "20px" }}>
         <Typography
           variant="caption"
           letterSpacing={1}

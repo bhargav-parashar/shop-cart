@@ -17,7 +17,7 @@ const HomePage = () => {
     >
       <Container maxWidth="xl" >
         <Header />
-        <Box sx={{ bgcolor: "white", height:"80vh", padding:"none" }}>
+        <Box sx={{ bgcolor: "white", height:"90vh", padding:"none" }}>
           <ProductsGrid />
         </Box>
         <Footer />

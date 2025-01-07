@@ -163,7 +163,7 @@ const ProductsGrid = () => {
   
 
   return (
-    <Box sx={{ height: "85%", width: "100%" }}>
+    <Box sx={{ height: "90%", width: "100%" }}>
       <Stack direction="row" spacing={2}>
         <Dropdown
           categoryList={categoryList}

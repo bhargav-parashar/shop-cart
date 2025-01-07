@@ -8,7 +8,7 @@ import Cart from '@mui/icons-material/ShoppingCart';
 export default function SearchAppBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ bgcolor: "green" }}>
+      <AppBar position="static" sx={{ bgcolor: "#577616" }}>
         <Toolbar>
           
           <Cart sx={{color:"black"}}/>
