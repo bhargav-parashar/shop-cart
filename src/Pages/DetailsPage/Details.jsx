@@ -180,7 +180,6 @@ const Details = () => {
           <Typography variant="h6">
             Packaging Type: {product.packaging_type}
           </Typography>
-          
           <Typography variant="h6">igst: {`${product.igst} %`}</Typography>
           <Typography variant="h6">cgst: {`${product.cgst} %`}</Typography>
           <Typography variant="h6">sgst: {`${product.sgst} %`}</Typography>

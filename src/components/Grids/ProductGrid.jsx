@@ -1,67 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack,Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import defaultImage from "../../assets/default-image.png";
 import { API_BASE_URL } from "../../config/config.jsx";
 import { getProducts } from "../../services/callApi.js";
 import Dropdown from "../Dropdowns/Dropdown.jsx";
 
-
-const columns = [
-  {
-    field: "image",
-    headerName: "",
-    width: 150,
-    align: "center",
-    headerAlign: "center",
-    renderCell: (params) => {
-      const url = params.row.image || defaultImage;
-      return (
-        <img
-          src={url}
-          alt="Product"
-          style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-        />
-      );
-    },
-  },
-  {
-    field: "productName",
-    headerName: "Product Name",
-    width: 150,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "category",
-    headerName: "Category",
-    width: 150,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "price",
-    headerName: "Price",
-    type: "number",
-    width: 110,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "inStock",
-    headerName: "Status",
-    width: 110,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "cart",
-    headerName: "Buy",
-    width: 110,
-    align: "center",
-    headerAlign: "center",
-  },
-];
 
 //CREATED DATA GRID ROW ITEM FROM INPUT ARRAY
 const getProductRows = (arr) => {
@@ -74,12 +18,13 @@ const getProductRows = (arr) => {
       price: `₹ ${item.mrp.mrp}`,
       inStock: item.sell_out_of_stock === 0 ? "Out of Stock" : "In Stock",
       cart: "Add to Cart",
+      gtin:item.gtin
     };
   });
   return rows;
 };
 
-const ProductsGrid = ({selectedId,handleSelectionChange,page, setPage}) => {
+const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setPage}) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -160,7 +105,96 @@ const ProductsGrid = ({selectedId,handleSelectionChange,page, setPage}) => {
         
   };
 
-  
+  //DEFINE DATA GRID COLUMN SCHEMA
+  const columns = [
+    {
+      field: "image",
+      headerName: "",
+      width: 150,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const url = params.row.image || defaultImage;
+        return (
+          <img
+            src={url}
+            alt="Product"
+            style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+          />
+        );
+      },
+    },
+    {
+      field: "productName",
+      headerName: "Product Name",
+      width: 150,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "category",
+      headerName: "Category",
+      width: 150,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: "price",
+      headerName: "Price",
+      type: "number",
+      width: 110,
+      align: "left",
+      headerAlign: "left"
+      
+    },
+   
+    {
+      field: "details",
+      headerName: "Details",
+      width: 110,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const gtinId = params.row.gtin;
+        return (
+         
+          <Button onClick={()=>handleSelectionChange(gtinId)}>
+            View
+          </Button>
+         
+        );
+      },
+    },
+    {
+      field: "cart",
+      headerName: "Buy",
+      width: 150,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const gtinId = params.row.gtin;
+        const prodName = params.row.productName;
+        const prodMrp = params.row.price;
+        return (
+          <Button
+            variant="contained"
+            onClick={()=>handleAddCart(gtinId,prodName,prodMrp)}
+          >
+            Add to Cart
+          </Button>
+        );
+      },
+    },
+    {
+      field: "gtin",
+      headerName: "GTIN",
+      type: "number",
+      width: 110,
+      align: "left",
+      headerAlign: "left"
+      
+    },
+  ];
 
   return (
     <Box sx={{ height: "80vh", width: "100%" }}>
@@ -189,12 +223,16 @@ const ProductsGrid = ({selectedId,handleSelectionChange,page, setPage}) => {
         onPaginationModelChange={(newPage) => handlePageChange(newPage)}
         loading={loading}
         rowCount={501 * 20}
-        onRowSelectionModelChange={(newSelectionModel) =>
-          handleSelectionChange(newSelectionModel)
-        }
+        // onRowSelectionModelChange={(newSelectionModel) =>
+        //   handleSelectionChange(newSelectionModel)
+        // }
         rowSelectionModel={selectedId ? [selectedId] : []} 
         disableMultipleSelection 
         sx={{cursor:"pointer"}}
+        columnVisibilityModel={{
+          gtin: false
+          
+        }}
       />
     </Box>
   );

@@ -19,7 +19,7 @@ export default function Dropdown({categoryList,selectedValue, handleFilterChange
       <FormControl sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id={label}>{label}</InputLabel>
         <Select
-        name={label}
+          name={label}
           labelId={label}
           id={label}
           value={selectedValue}
