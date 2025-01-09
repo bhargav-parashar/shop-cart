@@ -102,7 +102,7 @@ const HomePage = () => {
     <Box sx={{ width: "100%" }}>
       <Grid container rowSpacing={0} columnSpacing={0}>
         <Grid size={{xs:12,md:9}}>
-          <Box sx={{ bgcolor: "white", height: "90vh", padding: "none" }}>
+          <Box sx={{ bgcolor: "white", height: "95vh", padding: "none" }}>
             <ProductsGrid
               selectedId={selectedId}
               handleSelectionChange={handleSelectionChange}
@@ -117,7 +117,7 @@ const HomePage = () => {
           <Box
             sx={{
               bgcolor: "white",
-              height: {xs:"fit-content", md:"90vh"},
+              height: {xs:"fit-content", md:"95vh"},
               overflow:"hidden",
               width: "100%",
               padding : "2%",
