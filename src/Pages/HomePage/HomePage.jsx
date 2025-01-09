@@ -4,12 +4,12 @@ import { ProductsGrid } from "../../components/Grids/ProductGrid.jsx";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid2";
 import Cart from "../../components/Cart/Cart.jsx";
-
+import { useLocalStorage } from "../../Hooks/useLocalStorage.jsx";
 
 const HomePage = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [page, setPage] = useState(0);
-  const [cartItems, setCartitems] = useState([]);
+  const [cartItems, setCartitems] = useLocalStorage("cart",[]);
   const [cartTotal, setCartTotal] = useState(0);
   const[showSuccess,setShowSuccess] = useState(false);
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ const HomePage = () => {
         "qty"  : Number(existingItem.qty) + 1
       };
       const newArray = cartItems.toSpliced(index,1,newItem);
+      localStorage.setItem("cart",JSON.stringify(newArray));
       setCartitems(newArray);
 
     }else{
@@ -50,6 +51,7 @@ const HomePage = () => {
         "mrp"  : mrp,
         "qty"  : 1
       }
+      localStorage.setItem("cart",JSON.stringify([...cartItems,newItem]));
       setCartitems([...cartItems,newItem]);
     }
     
@@ -70,7 +72,8 @@ const HomePage = () => {
         newArray = cartItems.toSpliced(index,1);
      else
         newArray = cartItems.toSpliced(index,1,newItem);
-     
+    
+    localStorage.setItem("cart",JSON.stringify(newArray)); 
     setCartitems(newArray);
   };
 
@@ -86,11 +89,12 @@ const HomePage = () => {
 
   //HANDLE CHECKOUT
   const handleCheckout = () =>{
+    localStorage.removeItem("page");
+    localStorage.removeItem("cart");
     setCartitems([]);
     setShowSuccess(true);
     setTimeout(()=>{
       setShowSuccess(false);
-      console.log(showSuccess)
     },2000)
   };
 
