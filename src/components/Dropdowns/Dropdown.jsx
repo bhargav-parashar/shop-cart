@@ -25,7 +25,7 @@ export default function Dropdown({categoryList,selectedValue, handleFilterChange
           value={selectedValue}
           label={label}
           onChange={handleFilterChange}
-          sx={{height:"45px"}}
+        
         >
           <MenuItem value="">
             <em>All Categories</em>

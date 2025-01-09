@@ -5,7 +5,7 @@ import defaultImage from "../../assets/default-image.png";
 import { API_BASE_URL } from "../../config/config.jsx";
 import { getProducts } from "../../services/callApi.js";
 import Dropdown from "../Dropdowns/Dropdown.jsx";
-
+import SearchField from "../SearchField/SearchField.jsx";
 
 //CREATED DATA GRID ROW ITEM FROM INPUT ARRAY
 const getProductRows = (arr) => {
@@ -29,7 +29,7 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchedItem, setSearchedItem] = useState("");
-  const [sort, setSort] = useState("");
+  const [sort, setSort] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,8 +42,16 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
         `${API_BASE_URL}?page=${Number(page) + 1 + ""}`
       );
       setProducts(res.data.products);
-      setFilteredProducts([]);
-      setSelectedCategory("");
+      setFilteredProducts(res.data.products);
+      setSelectedCategory(null);
+      setSort(null);
+      
+      const productRows = getProductRows(products);
+      setRows(productRows);
+      const catList = products.map((item, idx) => item.main_category);
+      setCategoryList(catList);
+
+
     } catch (err) {
       console.log(err);
     } finally {
@@ -58,35 +66,51 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
 
   //UPDATE FILTERED PRODUCTS ARRAY
   useEffect(() => {
-    const productRows =
-      filteredProducts.length === 0
-        ? getProductRows(products)
-        : getProductRows(filteredProducts);
+
+    const productRows =getProductRows(filteredProducts);
+    
     setRows(productRows);
     const catList = products.map((item, idx) => item.main_category);
+    
+    
     setCategoryList(catList);
+
+
   }, [products, filteredProducts]);
 
-  //APPLY FILTER
+  
+  //APPLY CATEGORY FILTER
   useEffect(() => {
-    let data ;
+    const data = filteredProducts.length > 0 ? JSON.parse(JSON.stringify(filteredProducts)) : JSON.parse(JSON.stringify(products));
+    const filteredData = data.filter((item) => item.main_category === selectedCategory);
+    setFilteredProducts(filteredData);
+    setSort(null);
     
-    if (selectedCategory !== null) {
-      
-      data = products.filter((item, idx) => item.main_category === selectedCategory);
-    }
+  }, [selectedCategory]);
 
-    if (sort !== null) {
+  //APPLY SORT FILTER
+  useEffect(() => {
+    const data = filteredProducts.length > 0 ? JSON.parse(JSON.stringify(filteredProducts)) : JSON.parse(JSON.stringify(products));
+    const filteredData = sort === "Price Ascending" ?
+                         data.sort((a,b) => a.mrp.mrp - b.mrp.mrp):
+                         sort === "Price Descending"?
+                         data.sort((a,b) => b.mrp.mrp - a.mrp.mrp):undefined;
     
-      if(sort === "Price Ascending"){
-        data.sort((a,b) => a.mrp.mrp - b.mrp.mrp);
-      }else if (sort === "Price Descending"){
-       data.sort((a,b) => b.mrp.mrp - a.mrp.mrp);
-      }
-    }
 
-    setFilteredProducts(data);
-  }, [selectedCategory,sort]);
+    if(filteredData)
+      setFilteredProducts(filteredData);
+
+    
+  }, [sort]);
+
+  //APPLY SEARCH FILTER
+  useEffect(() => {
+    const data = filteredProducts.length > 0 ? JSON.parse(JSON.stringify(filteredProducts)) : JSON.parse(JSON.stringify(products));
+    const filteredData = data.filter((item) => item.name.search(searchedItem)>=0);
+    setFilteredProducts(filteredData);
+    setSort(null);
+    
+  }, [searchedItem]);
 
   //HANDLE PAGE CHANGE
   const handlePageChange = (newPage) => {
@@ -102,6 +126,9 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
      
     if(event.target.name === "Sort")
       setSort(event.target.value);
+
+    if(event.target.name === "SearchField")
+      setSearchedItem(event.target.value);
         
   };
 
@@ -199,6 +226,11 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
   return (
     <Box sx={{ height: "80vh", width: "100%" }}>
       <Stack direction="row" spacing={2}>
+      <SearchField
+        searchedItem = {searchedItem}
+        label="SearchField"
+        handleFilterChange={handleFilterChange}
+      />
         <Dropdown
           categoryList={categoryList}
           selectedValue={selectedCategory}
