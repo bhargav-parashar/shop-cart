@@ -8,7 +8,6 @@ import { useLocalStorage } from "../../Hooks/useLocalStorage.jsx";
 
 const HomePage = () => {
   const [selectedId, setSelectedId] = useState(null);
-  //const [page, setPage] = useState(0);
   const [page, setPage] = useLocalStorage("page",0);
   const [cartItems, setCartitems] = useLocalStorage("cart",[]);
   const [cartTotal, setCartTotal] = useState(0);
