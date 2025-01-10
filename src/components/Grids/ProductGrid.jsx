@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../../config/config.jsx";
 import { getProducts } from "../../services/callApi.js";
 import Dropdown from "../Dropdowns/Dropdown.jsx";
 import SearchField from "../SearchField/SearchField.jsx";
+import { useLocalStorage } from "../../Hooks/useLocalStorage.jsx";
 
 //CREATE DATA GRID ROW ITEM FROM INPUT ARRAY
 const getProductRows = (arr) => {
@@ -30,7 +31,12 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
   //STATE VARIABLES
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [filters, setFilters] = useState({
+  // const [filters, setFilters] = useState({
+  //   searchField : "",
+  //   category:"",
+  //   sort:""
+  // });
+  const [filters, setFilters] = useLocalStorage("filters",{
     searchField : "",
     category:"",
     sort:""
@@ -50,11 +56,7 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
       );
       setProducts(res.data.products);
       setFilteredProducts(res.data.products);
-      setFilters({
-        searchField : "",
-        category:"",
-        sort:""
-      })
+      
       
       const productRows = getProductRows(products);
       setRows(productRows);
@@ -73,6 +75,11 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
   const handlePageChange = (newPage) => {
     const { page: p } = newPage;
     setPage(p);
+    setFilters({
+      searchField : "",
+      category:"",
+      sort:""
+    })
   };
 
   //HANDLE FILTER CHANGE
@@ -80,7 +87,7 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
 
     const {name,value} = event.target;
     setFilters((prev)=>({...prev, [name] : value})) 
-       
+    
   };
 
 
@@ -93,7 +100,7 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
 
   //UPDATE FILTERED PRODUCTS ARRAY AND CATEGORY DROPDOWN LIST
   useEffect(() => {
-
+    localStorage.setItem('filters',JSON.stringify(filters));  
     const productRows =getProductRows(filteredProducts);
     setRows(productRows);
     
@@ -105,6 +112,7 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
   
   //APPLY FILTERS
   useEffect(()=>{
+    
     let filteredData = [...products];
 
     if(filters.category){
@@ -128,7 +136,7 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
       
     }
     setFilteredProducts(filteredData)
-  },[filters])
+  },[filters,products])
 
   
 
@@ -253,8 +261,10 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
         columns={columns}
         pagination
         paginationMode="server"
-        page={page}
-        pageSize={20}
+        paginationModel={{
+          page : page,
+          pageSize : 25
+        }}
         onPaginationModelChange={(newPage) => handlePageChange(newPage)}
         loading={loading}
         rowCount={501 * 20}
