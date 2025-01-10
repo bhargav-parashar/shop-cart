@@ -31,11 +31,6 @@ const ProductsGrid = ({selectedId,handleSelectionChange,handleAddCart,page, setP
   //STATE VARIABLES
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  // const [filters, setFilters] = useState({
-  //   searchField : "",
-  //   category:"",
-  //   sort:""
-  // });
   const [filters, setFilters] = useLocalStorage("filters",{
     searchField : "",
     category:"",

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
-import { Box, maxWidth } from "@mui/system";
+import { Box } from "@mui/system";
 import { useSearchParams } from "react-router-dom";
 import { API_BASE_URL } from "../../config/config.jsx";
 import { getProducts } from "../../services/callApi.js";
