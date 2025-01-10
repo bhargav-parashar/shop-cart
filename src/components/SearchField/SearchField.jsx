@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Search from '@mui/icons-material/Search';
 
-export default function SearchField({searchedItem,label,handleFilterChange}) {
+export default function SearchField({searchedItem,label,handleFilterChange,name}) {
   return (
     <Box
       component="form"
@@ -13,7 +13,7 @@ export default function SearchField({searchedItem,label,handleFilterChange}) {
       autoComplete="off"
     >
       <TextField
-          name={label}
+          name={name}
           id="standard-search"
           label="Search Product"
           type="search"

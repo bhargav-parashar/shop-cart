@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-export default function Dropdown({categoryList,selectedValue, handleFilterChange, label}) {
+export default function Dropdown({categoryList,selectedValue, handleFilterChange, label,name}) {
   
 
 
@@ -19,10 +19,9 @@ export default function Dropdown({categoryList,selectedValue, handleFilterChange
       <FormControl sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id={label}>{label}</InputLabel>
         <Select
-          name={label}
-          labelId={label}
+          name={name}
           id={label}
-          value={selectedValue}
+          value={selectedValue ?? ""}
           label={label}
           onChange={handleFilterChange}
         
